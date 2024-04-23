@@ -6,7 +6,7 @@ import shutil
 from urllib.parse import urlparse
 
 def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
-    DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/Data').expanduser()
+    DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/Data').expanduser()
 
     input_dir = DATA_DIR / input_artifact
 
