@@ -6,8 +6,8 @@ import shutil
 from urllib.parse import urlparse
 
 def main(input_artifact: str, schema_value: str):
-    DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/Data').expanduser()
-    #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
+    #DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/Data').expanduser()
+    DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
 
     input_dir = DATA_DIR / input_artifact
 
@@ -28,13 +28,14 @@ def main(input_artifact: str, schema_value: str):
             items = {}
 
             for row in reader:
-                up = urlparse(row[0]).hostname
-                schema_type = row[2]
-                if up not in used_urls:
-                    used_urls.add(up)
-                    items[up] = [schema_type]
-                else:
-                    items[up] += [schema_type]
+                if row[i] != "":
+                    up = urlparse(row[0]).hostname
+                    schema_type = row[2]
+                    if up not in used_urls:
+                        used_urls.add(up)
+                        items[up] = [schema_type]
+                    else:
+                        items[up] += [schema_type]
 
         
             write_out = open("list_sv_per_url.txt", "w")
