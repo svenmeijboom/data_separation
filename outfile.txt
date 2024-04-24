@@ -1,3 +1,0 @@
-Vertical	cinejour.com	http://schema.org/Organization-http://schema.org/name
-1	1	4	2
-https://cinejour.com/454-the-life-aquatic-with-steve-zissou-2004/	4	CINEJOUR	Cinejour"||||"CINEJOUR	CINEJOUR	CINEJOUR

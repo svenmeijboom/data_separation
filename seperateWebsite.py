@@ -7,10 +7,11 @@ from urllib.parse import urlparse
 
 def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
     DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/Data').expanduser()
+    #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
 
     input_dir = DATA_DIR / input_artifact
 
-    #print(input_dir)
+    print(input_dir)
 
     with gzip.open(input_dir, 'rb') as f_in:
         with open('file.csv', 'wb') as f_out:
@@ -32,7 +33,7 @@ def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
             for row in reader:
                 up = urlparse(row[0])
                 if up.hostname == url: #check url constraint
-                    if row[2] == schema_type: #check schema type constraint
+                    if row[2] in schema_type: #check schema type constraint
                         if row[0] not in used_urls:
                             used_urls.add(row[0])
                             items[row[0]] = [row[i]]
