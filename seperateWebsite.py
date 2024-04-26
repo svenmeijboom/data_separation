@@ -50,20 +50,37 @@ def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
             
             id = 0
 
+            fault_403 = 0
+            fault_404 = 0
+            fault_else = 0
+            good = 0
+
             for item in items:
-                print(item)
+                #print(item)
                 response = requests.get(item)
-                print(response)
+                #print(response)
                 #print(response.content)
-                with open("telephone/"+str(id)+".htm", mode="wb") as file:
-                    file.write(requests.get(item).content)
+                #with open("telephone/"+str(id)+".htm", mode="wb") as file:
+                #    file.write(requests.get(item).content)
+                if (response.status_code == 403):
+                    fault_403 += 1
+                elif (response.status_code == 404):
+                    fault_404 += 1
+                elif (response.status_code == 200):
+                    good += 1
+                else:
+                    fault_else += 1
+                
+            print("Good: " + str(good))
+            print("fault 403: " + str(fault_403))
+            print("fault 404: " + str(fault_404))
+            print("fault else: " + str(fault_else))
+                #write_out.write(str(id) + '\t' + str(len(items[item])))
+                #for it in items[item]:
+                #    write_out.write('\t' + it.strip('"\''))
+                #write_out.write('\n')
 
-                write_out.write(str(id) + '\t' + str(len(items[item])))
-                for it in items[item]:
-                    write_out.write('\t' + it.strip('"\''))
-                write_out.write('\n')
-
-                id += 1
+                #id += 1
 
         
 
