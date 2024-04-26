@@ -4,6 +4,7 @@ import csv
 import gzip
 import shutil
 from urllib.parse import urlparse
+import requests
 
 def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
     DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/Data').expanduser()
@@ -43,14 +44,26 @@ def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
                         unique_attribute_values.add(row[i])
 
         
-            write_out = open("outfile.txt", "w")
+            write_out = open("university-telephone.txt", "w")
             write_out.write("Vertical" + '\t' + url + '\t' + schema_type + "-" + schema_value + '\n')
             write_out.write(str(len(used_urls)) + '\t' + str(len(used_urls)) + '\t' + str(total_attribute_values) + '\t' + str(len(unique_attribute_values)) + '\n')
+            
+            id = 0
+
             for item in items:
-                write_out.write(item + '\t' + str(len(items[item])))
+                print(item)
+                response = requests.get(item)
+                print(response)
+                #print(response.content)
+                with open("telephone/"+str(id)+".htm", mode="wb") as file:
+                    file.write(requests.get(item).content)
+
+                write_out.write(str(id) + '\t' + str(len(items[item])))
                 for it in items[item]:
                     write_out.write('\t' + it.strip('"\''))
                 write_out.write('\n')
+
+                id += 1
 
         
 
