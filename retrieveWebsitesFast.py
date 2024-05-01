@@ -10,7 +10,9 @@ import requests
 def main(input_artifact: str, schema_value: str):
     #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
     DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
-
+    print(input_artifact)
+    print(DATA_DIR)
+    print(DATA_DIR / input_artifact)
     input_dir = DATA_DIR / input_artifact
     print(input_dir)
 
