@@ -8,10 +8,11 @@ import os
 import requests
 
 def main(input_artifact: str, schema_value: str):
-    DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
-    #DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
+    #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
+    DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
 
     input_dir = DATA_DIR / input_artifact
+    print(input_dir)
 
     with gzip.open(input_dir, 'rb') as f_in:
         with open('file.csv', 'wb') as f_out:
