@@ -54,7 +54,7 @@ def find_download_websites(url: str, schema_type: str, schema_value: str):
                         total_attribute_values += 1
                         unique_attribute_values.add(row[i])
 
-            dataset_folder = "Dataset/"
+            dataset_folder = "Data/telephone-set/"
             category = "university"
             schema_value_ab = schema_value.rsplit('/', 1)[1]
 

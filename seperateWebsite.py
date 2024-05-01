@@ -64,8 +64,9 @@ def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
                 os.makedirs(category+"/"+category+"-"+url)
             
             for item in items:
+                response = requests.get(item) 
                 with open(category+"/"+category+"-"+url+"/"+str(id)+".htm", mode="wb") as file:
-                    file.write(requests.get(item).content)
+                    file.write(response.content)
         
                 write_out.write(str(id) + '\t' + str(len(items[item])))
                 for it in items[item]:
@@ -74,7 +75,6 @@ def main(input_artifact: str, url: str, schema_type: str, schema_value: str):
 
                 id += 1
 
-                response = requests.get(item)
                 if (response.status_code == 403):
                     fault_403 += 1
                 elif (response.status_code == 404):
