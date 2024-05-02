@@ -57,8 +57,10 @@ def main(input_artifact: str, schema_value: str):
             if not os.path.exists(dataset_folder+category+"/"+category+"-"+website_name):
                 os.makedirs(dataset_folder+category+"/"+category+"-"+website_name)
 
-            gt_file = open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "a")
-            gt_file.write(category + '\t' + website_name + '\t' + schema_value + '\n')
+            name_gt_file = dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt"
+            with open(name_gt_file, "a") as gt_file:
+                gt_file.write(category + '\t' + website_name + '\t' + schema_value + '\n')
+                gt_file.close()
 
             id = 0
             good_status_codes = 0
@@ -76,19 +78,24 @@ def main(input_artifact: str, schema_value: str):
                             with open(dataset_folder+category+"/"+category+"-"+website_name+"/"+str(id)+".htm", mode="wb") as file:
                                 file.write(response.content)
                     
-                            gt_file.write(str(id) + '\t' + str(len(items[link])))
-                            for it in items[link]:
-                                gt_file.write('\t' + it.strip('"\''))
-                            gt_file.write('\n')
+                            with open(name_gt_file, "a") as gt_file:
+                                gt_file.write(str(id) + '\t' + str(len(items[link])))
+                                for it in items[link]:
+                                    gt_file.write('\t' + it.strip('"\''))
+                                gt_file.write('\n')
 
                             all_attributes += items[link]
                             id += 1
                     else:
                         fault_status_codes += 1
+                    with open("responses.txt", mode="w") as file:
+                        file.write("Good status codes: " + str(good_status_codes) + '\n')
+                        file.write("fault status codes: " + str(fault_status_codes) + '\n' +'\n')
                 except:
                     fault_status_codes += 1
-
-            gt_file.close()
+                    with open("responses.txt", mode="w") as file:
+                        file.write("Good status codes: " + str(good_status_codes) + '\n')
+                        file.write("fault status codes: " + str(fault_status_codes) + '\n' +'\n')
             
             with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "r") as edit_gt_file:
                 new_content = edit_gt_file.readlines()
