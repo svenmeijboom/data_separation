@@ -7,9 +7,9 @@ from urllib.parse import urlparse
 import os
 import requests
 
-def main(input_artifact: str, schema_value: str):
-    #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
-    DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
+def main(input_artifact: str, schema_value: str, file_count: int):
+    DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
+    #DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
     input_dir = DATA_DIR / input_artifact
 
     with gzip.open(input_dir, 'rb') as f_in:
@@ -70,23 +70,24 @@ def main(input_artifact: str, schema_value: str):
 
             for website in websites:
                 for link in websites[website]:
+                    if id >= file_count:
+                        break
                     try:
                         response = requests.get(link)
                         if response.status_code == 200:
                             good_status_codes += 1
 
-                            for link in websites[website]:
-                                with open(dataset_folder+category+"/"+category+"-"+website_name+"/"+str(id)+".htm", mode="wb") as file:
-                                    file.write(response.content)
-                        
-                                with open(name_gt_file, "a") as gt_file:
-                                    gt_file.write(str(id) + '\t' + str(len(items[link])))
-                                    for it in items[link]:
-                                        gt_file.write('\t' + it.strip('"\''))
-                                    gt_file.write('\n')
+                            with open(dataset_folder+category+"/"+category+"-"+website_name+"/"+str(id)+".htm", mode="wb") as file:
+                                file.write(response.content)
+                    
+                            with open(name_gt_file, "a") as gt_file:
+                                gt_file.write(str(id) + '\t' + str(len(items[link])))
+                                for it in items[link]:
+                                    gt_file.write('\t' + it.strip('"\''))
+                                gt_file.write('\n')
 
-                                all_attributes += items[link]
-                                id += 1
+                            all_attributes += items[link]
+                            id += 1
                         else:
                             fault_status_codes += 1
                     except:
@@ -114,6 +115,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-f', '--input-file', type=str, required=True, help='name of the input file in the Data folder')
     parser.add_argument('-sv', '--schema-value', type=str, required=True, help='selected schema value')
+    parser.add_argument('-fc', '--file-count', type=int, required=True, help='number of files crawled')
 
     args = parser.parse_args()
-    main(args.input_file, args.schema_value)
+    main(args.input_file, args.schema_value, args.file_count)
