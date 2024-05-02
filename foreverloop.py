@@ -70,37 +70,9 @@ def main(input_artifact: str, schema_value: str):
             if not os.path.exists(dataset_folder+category):
                 os.makedirs(dataset_folder+category)
 
-            for website in websites:
-                if len(websites[website]) > 1:
-                    attribute_values = []
-                    for link in websites[website]:
-                        attribute_values += items[link]
-                    unique_attribute_values = list(dict.fromkeys(attribute_values))
-
-                    gt_file = open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website+"-"+schema_value_ab+".txt", "a")
-                    gt_file.write(category + '\t' + website + '\t' + schema_value + '\n')
-                    gt_file.write(str(len(websites[website])) + '\t' + str(len(websites[website])) + '\t' + str(len(attribute_values)) + '\t' + str(len(unique_attribute_values)) + '\n')
-
-                    id = 0
-
-                    if not os.path.exists(dataset_folder+category+"/"+category+"-"+website):
-                        os.makedirs(dataset_folder+category+"/"+category+"-"+website)
-
-                    for link in websites[website]:
-                        with open(dataset_folder+category+"/"+category+"-"+website+"/"+str(id)+".htm", mode="wb") as file:
-                            file.write(requests.get(link).content)
-                
-                        gt_file.write(str(id) + '\t' + str(len(items[link])))
-                        for it in items[link]:
-                            gt_file.write('\t' + it.strip('"\''))
-                        gt_file.write('\n')
-
-                        id += 1
-                    gt_file.close()
-                    
-            with open("responses.txt", mode="w") as file:
-                file.write("Good status codes: " + str(good_status_codes) + '\n')
-                file.write("fault status codes: " + str(fault_status_codes) + '\n')
+            i = 0
+            while i < 10:
+                pass
 
 
 
