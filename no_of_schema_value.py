@@ -47,7 +47,8 @@ def main(input_artifact: str, schema_value: str):
                     else:
                         items[link] += [row[i]]
     
-    print(len(used_links))
+    with open("no_links.txt", mode="w") as file:
+        file.write("Number of links: " + str(len(used_links)) + '\n')
 
 
 if __name__ == '__main__':
