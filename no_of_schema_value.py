@@ -13,11 +13,11 @@ def main(input_artifact: str, schema_type: str, schema_value: str):
     input_dir = DATA_DIR / input_artifact
 
     with gzip.open(input_dir, 'rb') as f_in:
-        with open('file.csv', 'wb') as f_out:
+        with open('numberfile.csv', 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
 
     no_attributes = 0
-    with open('file.csv', newline='') as f:
+    with open('numberfile.csv', newline='') as f:
         reader = csv.reader(f)
 
         first_row = next(reader)
