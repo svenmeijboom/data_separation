@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 import os
 import requests
 
-def main(input_artifact: str, schema_value: str):
+def main(input_artifact: str, schema_type: str, schema_value: str):
     #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
     DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
     input_dir = DATA_DIR / input_artifact
@@ -31,21 +31,22 @@ def main(input_artifact: str, schema_value: str):
             items = {}
 
             for row in reader:
-                if row[i] != "":
-                    link = row[0]
+                if row[2] == schema_type:
+                    if row[i] != "":
+                        link = row[0]
 
-                    up = urlparse(link).hostname
-                    if up not in used_websites:
-                        used_websites.add(up)
-                        websites[up] = [link]
-                    else:
-                        websites[up] += [link]
-                    
-                    if link not in used_links:
-                        used_links.add(link)
-                        items[link] = [row[i]]
-                    else:
-                        items[link] += [row[i]]
+                        up = urlparse(link).hostname
+                        if up not in used_websites:
+                            used_websites.add(up)
+                            websites[up] = [link]
+                        else:
+                            websites[up] += [link]
+                        
+                        if link not in used_links:
+                            used_links.add(link)
+                            items[link] = [row[i]]
+                        else:
+                            items[link] += [row[i]]
     
     with open("no_links.txt", mode="w") as file:
         file.write("Number of links: " + str(len(used_links)) + '\n')
@@ -55,7 +56,8 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='Check number of attributes that contain schema value.')
 
     parser.add_argument('-f', '--input-file', type=str, required=True, help='name of the input file in the Data folder')
+    parser.add_argument('-st', '--schema-type', type=str, required=True, help='selected schema type')
     parser.add_argument('-sv', '--schema-value', type=str, required=True, help='selected schema value')
 
     args = parser.parse_args()
-    main(args.input_file, args.schema_value)
+    main(args.input_file, args.schema_type, args.schema_value)
