@@ -54,7 +54,7 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
                             items[link] += [row[i]]
             
 
-            folders = chunks(websites, len(websites)/10)
+            folders = chunks(websites, int(len(websites)/10))
             
             dataset_folder = "Data/MovieName-set/"
             category = "Movie"
