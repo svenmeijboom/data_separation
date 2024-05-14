@@ -55,8 +55,8 @@ def main(input_artifact: str, schema_value: str, file_count: int):
 
             folders = chunks(websites, int(len(websites)/10))
             
-            dataset_folder = "Data/MovieName-set/"
-            category = "Movie"
+            dataset_folder = "Data/telephone-set/"
+            category = "University"
             schema_value_ab = schema_value.rsplit('/', 1)[1]
 
             if not os.path.exists(dataset_folder+"groundtruth/" + category):
