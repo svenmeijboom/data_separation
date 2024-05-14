@@ -54,7 +54,7 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
                             items[link] += [row[i]]
             
 
-            websites_lookup = websites
+            folders = chunks(websites, int(len(websites)/10))
             
             dataset_folder = "Data/MovieName-set/"
             category = "Movie"
@@ -64,64 +64,64 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
                 os.makedirs(dataset_folder+"groundtruth/" + category)
             
             folnr = 0
-            while folnr < 10:
-                website_name = "various_websites" + str(folnr)
+            for websites in folders:
+                while folnr < 10:
+                    website_name = "various_websites" + str(folnr)
 
-                if not os.path.exists(dataset_folder+category+"/"+category+"-"+website_name):
-                    os.makedirs(dataset_folder+category+"/"+category+"-"+website_name)
+                    if not os.path.exists(dataset_folder+category+"/"+category+"-"+website_name):
+                        os.makedirs(dataset_folder+category+"/"+category+"-"+website_name)
 
-                name_gt_file = dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt"
-                with open(name_gt_file, "a") as gt_file:
-                    gt_file.write(category + '\t' + website_name + '\t' + schema_value + '\n')
-                    gt_file.close()
+                    name_gt_file = dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt"
+                    with open(name_gt_file, "a") as gt_file:
+                        gt_file.write(category + '\t' + website_name + '\t' + schema_value + '\n')
+                        gt_file.close()
 
-                id = 0
-                good_status_codes = 0
-                fault_status_codes = 0
+                    id = 0
+                    good_status_codes = 0
+                    fault_status_codes = 0
 
-                all_attributes = []
+                    all_attributes = []
 
-                while websites:
-                    website = websites.popitem()
-                    for link in websites_lookup[website]:
-                        if id >= file_count:
-                            break
-                        try:
-                            response = requests.get(link)
-                            if response.status_code == 200:
-                                good_status_codes += 1
+                    for website in websites:
+                        for link in websites[website]:
+                            if id >= file_count:
+                                break
+                            try:
+                                response = requests.get(link)
+                                if response.status_code == 200:
+                                    good_status_codes += 1
 
-                                with open(dataset_folder+category+"/"+category+"-"+website_name+"/"+str(id)+".htm", mode="wb") as file:
-                                    file.write(response.content)
-                        
-                                with open(name_gt_file, "a") as gt_file:
-                                    gt_file.write(str(id) + '\t' + str(len(items[link])))
-                                    for it in items[link]:
-                                        gt_file.write('\t' + it.strip('"\''))
-                                    gt_file.write('\n')
+                                    with open(dataset_folder+category+"/"+category+"-"+website_name+"/"+str(id)+".htm", mode="wb") as file:
+                                        file.write(response.content)
+                            
+                                    with open(name_gt_file, "a") as gt_file:
+                                        gt_file.write(str(id) + '\t' + str(len(items[link])))
+                                        for it in items[link]:
+                                            gt_file.write('\t' + it.strip('"\''))
+                                        gt_file.write('\n')
 
-                                all_attributes += items[link]
-                                id += 1
-                            else:
+                                    all_attributes += items[link]
+                                    id += 1
+                                else:
+                                    fault_status_codes += 1
+                            except:
                                 fault_status_codes += 1
-                        except:
-                            fault_status_codes += 1
-                
-                with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "r") as edit_gt_file:
-                    new_content = edit_gt_file.readlines()
-                
-                unique_attributes = list(dict.fromkeys(all_attributes))
-                new_content.insert(1, str(id) + '\t' + str(id) + '\t' + str(len(all_attributes)) + '\t' + str(len(unique_attributes)) + '\n')
-                
-                with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "w") as edit_gt_file:
-                    new_content = "".join(new_content)
-                    edit_gt_file.write(new_content)
-                        
-                with open("responses.txt", mode="a") as file:
-                    file.write("Good status codes: " + str(good_status_codes) + '\n')
-                    file.write("fault status codes: " + str(fault_status_codes) + '\n')
-                
-                folnr += 1
+                    
+                    with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "r") as edit_gt_file:
+                        new_content = edit_gt_file.readlines()
+                    
+                    unique_attributes = list(dict.fromkeys(all_attributes))
+                    new_content.insert(1, str(id) + '\t' + str(id) + '\t' + str(len(all_attributes)) + '\t' + str(len(unique_attributes)) + '\n')
+                    
+                    with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "w") as edit_gt_file:
+                        new_content = "".join(new_content)
+                        edit_gt_file.write(new_content)
+                            
+                    with open("responses.txt", mode="a") as file:
+                        file.write("Good status codes: " + str(good_status_codes) + '\n')
+                        file.write("fault status codes: " + str(fault_status_codes) + '\n')
+                    
+                    folnr += 1
 
 
 
