@@ -82,6 +82,7 @@ def main(input_artifact: str, schema_value: str, file_count: int):
                     all_attributes = []
 
                     for website in websites:
+
                         for link in websites[website]:
                             if id >= file_count:
                                 break
@@ -103,6 +104,7 @@ def main(input_artifact: str, schema_value: str, file_count: int):
                                     id += 1
                                 else:
                                     fault_status_codes += 1
+                                    break
                             except:
                                 fault_status_codes += 1
                     
