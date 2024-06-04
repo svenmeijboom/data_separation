@@ -8,12 +8,12 @@ import os
 import requests
 from itertools import islice
 
-def chunks(data, SIZE=10000):
+def chunks(data, size):
     it = iter(data)
-    for i in range(0, len(data), SIZE):
-        yield {k:data[k] for k in islice(it, SIZE)}
+    for i in range(0, len(data), size):
+        yield {k:data[k] for k in islice(it, size)}
 
-def main(input_artifact: str, schema_type: str, schema_value: str, file_count: int):
+def main(input_artifact: str, schema_type: str, property: str, folder_count: int, file_count: int):
     #DATA_DIR = Path('C:/Users/svenm/Documents/Radboud/BachelorThesis/CSVtoTXT/data_separation/Data').expanduser()
     DATA_DIR = Path('/vol/csedu-nobackup/other/smeijboom/data_separation/').expanduser()
     input_dir = DATA_DIR / input_artifact
@@ -26,8 +26,8 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
         reader = csv.reader(f)
 
         first_row = next(reader)
-        if schema_value in first_row:
-            i = first_row.index(schema_value)
+        if property in first_row:
+            i = first_row.index(property)
 
             used_websites = set()
             used_links = set()
@@ -54,26 +54,26 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
                             items[link] += [row[i]]
             
 
-            folders = chunks(websites, int(len(websites)/10))
+            folders = chunks(websites, int(len(websites)/folder_count))
             
             dataset_folder = "Data/MovieName-set/"
             category = "Movie"
-            schema_value_ab = schema_value.rsplit('/', 1)[1]
+            property_ab = property.rsplit('/', 1)[1]
 
             if not os.path.exists(dataset_folder+"groundtruth/" + category):
                 os.makedirs(dataset_folder+"groundtruth/" + category)
             
             folnr = 0
             for websites in folders:
-                while folnr < 10:
+                while folnr < folder_count:
                     website_name = "various_websites" + str(folnr)
 
                     if not os.path.exists(dataset_folder+category+"/"+category+"-"+website_name):
                         os.makedirs(dataset_folder+category+"/"+category+"-"+website_name)
 
-                    name_gt_file = dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt"
+                    name_gt_file = dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+property_ab+".txt"
                     with open(name_gt_file, "a") as gt_file:
-                        gt_file.write(category + '\t' + website_name + '\t' + schema_value + '\n')
+                        gt_file.write(category + '\t' + website_name + '\t' + property + '\n')
                         gt_file.close()
 
                     id = 0
@@ -107,13 +107,13 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
                             except:
                                 fault_status_codes += 1
                     
-                    with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "r") as edit_gt_file:
+                    with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+property_ab+".txt", "r") as edit_gt_file:
                         new_content = edit_gt_file.readlines()
                     
                     unique_attributes = list(dict.fromkeys(all_attributes))
                     new_content.insert(1, str(id) + '\t' + str(id) + '\t' + str(len(all_attributes)) + '\t' + str(len(unique_attributes)) + '\n')
                     
-                    with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+schema_value_ab+".txt", "w") as edit_gt_file:
+                    with open(dataset_folder+"groundtruth/"+category+"/"+category+"-"+website_name+"-"+property_ab+".txt", "w") as edit_gt_file:
                         new_content = "".join(new_content)
                         edit_gt_file.write(new_content)
                             
@@ -129,10 +129,11 @@ def main(input_artifact: str, schema_type: str, schema_value: str, file_count: i
 if __name__ == '__main__':
     parser = ArgumentParser(description='Download html files and groundtruths from CSV database.')
 
-    parser.add_argument('-f', '--input-file', type=str, required=True, help='name of the input file in the Data folder')
+    parser.add_argument('-f', '--input-file', type=str, required=True, help='name of the CSV input file in the Data folder')
     parser.add_argument('-st', '--schema-type', type=str, required=True, help='selected schema type')
-    parser.add_argument('-sv', '--schema-value', type=str, required=True, help='selected schema value')
-    parser.add_argument('-fc', '--file-count', type=int, required=True, help='number of files crawled per folder')
+    parser.add_argument('-sv', '--property', type=str, required=True, help='selected property')
+    parser.add_argument('-foc', '--folder-count', type=int, required=True, help='number of total folders crawled')
+    parser.add_argument('-fic', '--file-count', type=int, required=True, help='number of files crawled per folder')
 
     args = parser.parse_args()
-    main(args.input_file, args.schema_type, args.schema_value, args.file_count)
+    main(args.input_file, args.schema_type, args.property, args.folder_count, args.file_count)
